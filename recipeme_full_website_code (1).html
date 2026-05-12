@@ -1,0 +1,1145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RecipeMe | Recipes, Cocktails & Snacks</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    body {
+      background: #fffaf3;
+      color: #2b2b2b;
+      line-height: 1.5;
+    }
+
+    header {
+      background: linear-gradient(135deg, #ff7043, #ffb74d);
+      color: white;
+      padding: 28px 7%;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      box-shadow: 0 3px 12px rgba(0,0,0,0.12);
+    }
+
+    .nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .logo {
+      font-size: 2rem;
+      font-weight: 800;
+      letter-spacing: -1px;
+    }
+
+    .logo span {
+      color: #fff3cd;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 18px;
+      flex-wrap: wrap;
+    }
+
+    .nav-links a {
+      color: white;
+      text-decoration: none;
+      font-weight: 700;
+    }
+
+    .hero {
+      padding: 70px 7% 50px;
+      text-align: center;
+      background: radial-gradient(circle at top, #fff1dd, #fffaf3 65%);
+    }
+
+    .hero h1 {
+      font-size: clamp(2.2rem, 5vw, 4.5rem);
+      color: #e65100;
+      margin-bottom: 16px;
+      line-height: 1.05;
+    }
+
+    .hero p {
+      max-width: 760px;
+      margin: 0 auto 28px;
+      font-size: 1.15rem;
+      color: #555;
+    }
+
+    .search-box {
+      max-width: 850px;
+      margin: 0 auto;
+      background: white;
+      display: flex;
+      border-radius: 999px;
+      overflow: hidden;
+      box-shadow: 0 8px 28px rgba(0,0,0,0.12);
+      border: 1px solid #ffe0b2;
+    }
+
+    .search-box input {
+      flex: 1;
+      padding: 19px 24px;
+      border: none;
+      outline: none;
+      font-size: 1rem;
+    }
+
+    .search-box button {
+      border: none;
+      background: #ff7043;
+      color: white;
+      padding: 0 28px;
+      font-weight: 800;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    .filters {
+      padding: 28px 7% 10px;
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .filter-btn {
+      border: 2px solid #ffb74d;
+      background: white;
+      color: #e65100;
+      padding: 11px 18px;
+      border-radius: 999px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .filter-btn.active,
+    .filter-btn:hover {
+      background: #ff7043;
+      color: white;
+      border-color: #ff7043;
+    }
+
+    .stats {
+      padding: 10px 7% 20px;
+      text-align: center;
+      color: #666;
+      font-weight: 700;
+    }
+
+    .recipe-grid {
+      padding: 25px 7% 70px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+      gap: 24px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 22px;
+      overflow: hidden;
+      box-shadow: 0 8px 22px rgba(0,0,0,0.08);
+      border: 1px solid #ffe0b2;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.2s;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+    }
+
+    .card-img {
+      height: 165px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 4rem;
+      background: linear-gradient(135deg, #fff3e0, #ffe0b2);
+    }
+
+    .card-content {
+      padding: 20px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .tag {
+      display: inline-block;
+      width: fit-content;
+      background: #fff3e0;
+      color: #e65100;
+      padding: 5px 10px;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 800;
+      margin-bottom: 10px;
+    }
+
+    .card h3 {
+      font-size: 1.25rem;
+      margin-bottom: 8px;
+      color: #222;
+    }
+
+    .meta {
+      color: #666;
+      font-size: 0.92rem;
+      margin-bottom: 12px;
+    }
+
+    .card p {
+      color: #555;
+      margin-bottom: 14px;
+      flex: 1;
+    }
+
+    .card button {
+      margin-top: auto;
+      border: none;
+      background: #ff7043;
+      color: white;
+      padding: 12px 14px;
+      border-radius: 12px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      z-index: 100;
+      padding: 25px;
+      overflow-y: auto;
+    }
+
+    .modal-content {
+      max-width: 850px;
+      margin: 30px auto;
+      background: white;
+      border-radius: 24px;
+      padding: 28px;
+      position: relative;
+    }
+
+    .close {
+      position: absolute;
+      top: 18px;
+      right: 22px;
+      font-size: 2rem;
+      cursor: pointer;
+      color: #777;
+    }
+
+    .modal h2 {
+      color: #e65100;
+      margin-bottom: 8px;
+      padding-right: 35px;
+    }
+
+    .modal-section {
+      margin-top: 22px;
+    }
+
+    .modal-section h3 {
+      margin-bottom: 8px;
+      color: #333;
+    }
+
+    .modal ul,
+    .modal ol {
+      padding-left: 24px;
+    }
+
+    .modal li {
+      margin-bottom: 8px;
+    }
+
+    footer {
+      background: #2b2b2b;
+      color: white;
+      padding: 35px 7%;
+      text-align: center;
+    }
+
+    footer p {
+      color: #ddd;
+      margin-top: 8px;
+    }
+
+    @media (max-width: 600px) {
+      header {
+        padding: 22px 5%;
+      }
+
+      .search-box {
+        flex-direction: column;
+        border-radius: 22px;
+      }
+
+      .search-box button {
+        padding: 15px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav class="nav">
+      <div class="logo">Recipe<span>Me</span></div>
+      <div class="nav-links">
+        <a href="#recipes">Recipes</a>
+        <a href="#cocktails">Cocktails</a>
+        <a href="#snacks">Snacks</a>
+      </div>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <h1>Find recipes, cocktails, and snacks from everywhere.</h1>
+    <p>Search meals, drinks, appetizers, desserts, comfort foods, quick snacks, and international dishes with ingredients and step-by-step instructions.</p>
+    <div class="search-box">
+      <input id="searchInput" type="text" placeholder="Search chicken alfredo, tacos, margarita, sushi, nachos..." />
+      <button onclick="searchRecipes()">Search</button>
+    </div>
+  </section>
+
+  <section class="filters">
+    <button class="filter-btn active" onclick="filterRecipes('All', this)">All</button>
+    <button class="filter-btn" onclick="filterRecipes('Dish', this)">Dishes</button>
+    <button class="filter-btn" onclick="filterRecipes('Cocktail', this)">Cocktails</button>
+    <button class="filter-btn" onclick="filterRecipes('Snack', this)">Snacks</button>
+    <button class="filter-btn" onclick="filterRecipes('Dessert', this)">Desserts</button>
+    <button class="filter-btn" onclick="filterRecipes('Breakfast', this)">Breakfast</button>
+    <button class="filter-btn" onclick="filterRecipes('Healthy', this)">Healthy</button>
+  </section>
+
+  <div class="stats" id="stats"></div>
+
+  <main class="recipe-grid" id="recipeGrid"></main>
+
+  <div class="modal" id="recipeModal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal()">&times;</span>
+      <div id="modalBody"></div>
+    </div>
+  </div>
+
+  <footer>
+    <h2>RecipeMe</h2>
+    <p>Cook it. Mix it. Snack it. Make it yours.</p>
+  </footer>
+
+  <script>
+    const recipes = [
+      {
+        name: "Chicken Alfredo",
+        type: "Dish",
+        cuisine: "Italian-American",
+        time: "30 minutes",
+        difficulty: "Easy",
+        emoji: "🍝",
+        description: "Creamy pasta with chicken, parmesan, garlic, and rich Alfredo sauce.",
+        ingredients: ["12 oz fettuccine", "2 chicken breasts", "2 tbsp butter", "3 garlic cloves", "1 cup heavy cream", "1 cup parmesan", "Salt", "Pepper", "Parsley"],
+        steps: ["Boil pasta until al dente.", "Season and cook chicken, then slice.", "Melt butter and cook garlic.", "Add cream and parmesan until smooth.", "Toss pasta with sauce and top with chicken."]
+      },
+      {
+        name: "Spaghetti Bolognese",
+        type: "Dish",
+        cuisine: "Italian",
+        time: "50 minutes",
+        difficulty: "Medium",
+        emoji: "🍝",
+        description: "Classic meat sauce with tomatoes, herbs, and spaghetti.",
+        ingredients: ["12 oz spaghetti", "1 lb ground beef", "1 onion", "2 garlic cloves", "28 oz crushed tomatoes", "2 tbsp tomato paste", "Italian seasoning", "Parmesan"],
+        steps: ["Cook pasta.", "Brown beef with onion and garlic.", "Add tomatoes, paste, and seasoning.", "Simmer 30 minutes.", "Serve over spaghetti with parmesan."]
+      },
+      {
+        name: "Margherita Pizza",
+        type: "Dish",
+        cuisine: "Italian",
+        time: "25 minutes",
+        difficulty: "Easy",
+        emoji: "🍕",
+        description: "Simple pizza with tomato sauce, mozzarella, basil, and olive oil.",
+        ingredients: ["Pizza dough", "1/2 cup tomato sauce", "Fresh mozzarella", "Fresh basil", "Olive oil", "Salt"],
+        steps: ["Preheat oven to 475°F.", "Spread sauce on dough.", "Add mozzarella.", "Bake 10-14 minutes.", "Top with basil and olive oil."]
+      },
+      {
+        name: "Cheeseburger",
+        type: "Dish",
+        cuisine: "American",
+        time: "20 minutes",
+        difficulty: "Easy",
+        emoji: "🍔",
+        description: "Juicy beef patty with cheese, lettuce, tomato, onion, and sauce.",
+        ingredients: ["1 lb ground beef", "Burger buns", "Cheddar cheese", "Lettuce", "Tomato", "Onion", "Pickles", "Burger sauce"],
+        steps: ["Form beef into patties.", "Season with salt and pepper.", "Cook patties 3-5 minutes per side.", "Add cheese to melt.", "Assemble burger with toppings."]
+      },
+      {
+        name: "Chicken Tacos",
+        type: "Dish",
+        cuisine: "Mexican",
+        time: "25 minutes",
+        difficulty: "Easy",
+        emoji: "🌮",
+        description: "Seasoned chicken tacos with salsa, lettuce, cheese, and lime.",
+        ingredients: ["2 chicken breasts", "Taco seasoning", "Tortillas", "Lettuce", "Cheese", "Salsa", "Sour cream", "Lime"],
+        steps: ["Cook seasoned chicken.", "Shred or slice chicken.", "Warm tortillas.", "Fill with chicken and toppings.", "Serve with lime."]
+      },
+      {
+        name: "Beef Burrito",
+        type: "Dish",
+        cuisine: "Mexican",
+        time: "30 minutes",
+        difficulty: "Easy",
+        emoji: "🌯",
+        description: "Large tortilla filled with seasoned beef, rice, beans, cheese, and salsa.",
+        ingredients: ["Large tortillas", "1 lb ground beef", "1 cup rice", "Black beans", "Cheese", "Salsa", "Sour cream", "Taco seasoning"],
+        steps: ["Cook rice.", "Brown beef with seasoning.", "Warm beans.", "Layer tortilla with rice, beans, beef, and cheese.", "Roll tightly and serve."]
+      },
+      {
+        name: "Sushi Rolls",
+        type: "Dish",
+        cuisine: "Japanese",
+        time: "45 minutes",
+        difficulty: "Medium",
+        emoji: "🍣",
+        description: "Homemade sushi rolls with rice, nori, cucumber, avocado, and fish or crab.",
+        ingredients: ["Sushi rice", "Nori sheets", "Rice vinegar", "Cucumber", "Avocado", "Crab or fish", "Soy sauce", "Wasabi"],
+        steps: ["Cook and season sushi rice.", "Place nori on bamboo mat.", "Spread rice over nori.", "Add fillings.", "Roll tightly and slice."]
+      },
+      {
+        name: "Chicken Teriyaki",
+        type: "Dish",
+        cuisine: "Japanese",
+        time: "25 minutes",
+        difficulty: "Easy",
+        emoji: "🍗",
+        description: "Tender chicken glazed in sweet and savory teriyaki sauce.",
+        ingredients: ["Chicken thighs", "Soy sauce", "Brown sugar", "Honey", "Garlic", "Ginger", "Cornstarch", "Rice"],
+        steps: ["Cook chicken until browned.", "Mix sauce ingredients.", "Pour sauce over chicken.", "Simmer until thick.", "Serve with rice."]
+      },
+      {
+        name: "Pad Thai",
+        type: "Dish",
+        cuisine: "Thai",
+        time: "35 minutes",
+        difficulty: "Medium",
+        emoji: "🍜",
+        description: "Rice noodles stir-fried with egg, peanuts, lime, and sweet-sour sauce.",
+        ingredients: ["Rice noodles", "Shrimp or chicken", "Eggs", "Bean sprouts", "Peanuts", "Lime", "Fish sauce", "Tamarind paste", "Brown sugar"],
+        steps: ["Soak noodles.", "Cook protein.", "Scramble eggs.", "Add noodles and sauce.", "Top with peanuts and lime."]
+      },
+      {
+        name: "Butter Chicken",
+        type: "Dish",
+        cuisine: "Indian",
+        time: "45 minutes",
+        difficulty: "Medium",
+        emoji: "🍛",
+        description: "Creamy tomato-based Indian chicken curry served with rice or naan.",
+        ingredients: ["Chicken", "Yogurt", "Garam masala", "Tomato puree", "Butter", "Heavy cream", "Garlic", "Ginger", "Rice or naan"],
+        steps: ["Marinate chicken with yogurt and spices.", "Cook chicken.", "Make tomato butter sauce.", "Add cream and chicken.", "Simmer and serve."]
+      },
+      {
+        name: "Chicken Curry",
+        type: "Dish",
+        cuisine: "Indian",
+        time: "40 minutes",
+        difficulty: "Medium",
+        emoji: "🍛",
+        description: "Warm spiced curry with chicken, onions, tomatoes, and rice.",
+        ingredients: ["Chicken", "Onion", "Tomatoes", "Garlic", "Ginger", "Curry powder", "Coconut milk", "Rice"],
+        steps: ["Cook onion, garlic, and ginger.", "Add chicken and brown.", "Add spices and tomatoes.", "Pour in coconut milk.", "Simmer until chicken is done."]
+      },
+      {
+        name: "Fried Rice",
+        type: "Dish",
+        cuisine: "Chinese",
+        time: "20 minutes",
+        difficulty: "Easy",
+        emoji: "🍚",
+        description: "Rice stir-fried with eggs, vegetables, soy sauce, and optional protein.",
+        ingredients: ["Cooked rice", "Eggs", "Peas", "Carrots", "Green onion", "Soy sauce", "Sesame oil", "Chicken or shrimp"],
+        steps: ["Scramble eggs.", "Stir-fry vegetables.", "Add rice and protein.", "Season with soy sauce and sesame oil.", "Top with green onion."]
+      },
+      {
+        name: "Orange Chicken",
+        type: "Dish",
+        cuisine: "Chinese-American",
+        time: "35 minutes",
+        difficulty: "Medium",
+        emoji: "🍊",
+        description: "Crispy chicken tossed in a sweet, tangy orange sauce.",
+        ingredients: ["Chicken pieces", "Cornstarch", "Egg", "Orange juice", "Soy sauce", "Sugar", "Garlic", "Ginger", "Rice"],
+        steps: ["Coat chicken in egg and cornstarch.", "Fry until crispy.", "Make orange sauce.", "Toss chicken in sauce.", "Serve with rice."]
+      },
+      {
+        name: "Greek Gyro",
+        type: "Dish",
+        cuisine: "Greek",
+        time: "25 minutes",
+        difficulty: "Easy",
+        emoji: "🥙",
+        description: "Pita filled with seasoned meat, tomato, onion, lettuce, and tzatziki.",
+        ingredients: ["Pita bread", "Gyro meat or chicken", "Tomato", "Red onion", "Lettuce", "Tzatziki sauce", "Feta"],
+        steps: ["Cook meat.", "Warm pita.", "Add meat and vegetables.", "Drizzle with tzatziki.", "Wrap and serve."]
+      },
+      {
+        name: "Falafel Wrap",
+        type: "Dish",
+        cuisine: "Middle Eastern",
+        time: "30 minutes",
+        difficulty: "Medium",
+        emoji: "🧆",
+        description: "Crispy chickpea patties wrapped with vegetables and tahini sauce.",
+        ingredients: ["Falafel", "Pita or wrap", "Lettuce", "Tomato", "Cucumber", "Tahini sauce", "Pickles"],
+        steps: ["Cook falafel until crispy.", "Warm wrap.", "Add vegetables.", "Add falafel and tahini.", "Roll and serve."]
+      },
+      {
+        name: "Steak Fajitas",
+        type: "Dish",
+        cuisine: "Tex-Mex",
+        time: "30 minutes",
+        difficulty: "Easy",
+        emoji: "🥩",
+        description: "Sizzling steak strips with peppers and onions served in tortillas.",
+        ingredients: ["Steak", "Bell peppers", "Onion", "Fajita seasoning", "Tortillas", "Lime", "Sour cream"],
+        steps: ["Slice steak and vegetables.", "Cook steak.", "Cook peppers and onions.", "Warm tortillas.", "Serve with lime and toppings."]
+      },
+      {
+        name: "BBQ Ribs",
+        type: "Dish",
+        cuisine: "American BBQ",
+        time: "3 hours",
+        difficulty: "Medium",
+        emoji: "🍖",
+        description: "Slow-cooked pork ribs with smoky barbecue sauce.",
+        ingredients: ["Pork ribs", "BBQ rub", "BBQ sauce", "Apple cider vinegar", "Brown sugar"],
+        steps: ["Season ribs with rub.", "Bake or smoke low and slow.", "Brush with BBQ sauce.", "Cook until tender.", "Rest before slicing."]
+      },
+      {
+        name: "Fish and Chips",
+        type: "Dish",
+        cuisine: "British",
+        time: "40 minutes",
+        difficulty: "Medium",
+        emoji: "🐟",
+        description: "Crispy battered fish with fries and tartar sauce.",
+        ingredients: ["White fish fillets", "Flour", "Beer or sparkling water", "Baking powder", "Potatoes", "Oil", "Tartar sauce"],
+        steps: ["Cut potatoes into fries.", "Fry fries until golden.", "Make batter.", "Dip fish in batter.", "Fry fish until crisp."]
+      },
+      {
+        name: "Shrimp Scampi",
+        type: "Dish",
+        cuisine: "Italian-American",
+        time: "25 minutes",
+        difficulty: "Easy",
+        emoji: "🍤",
+        description: "Shrimp cooked with garlic, butter, lemon, and pasta.",
+        ingredients: ["Shrimp", "Linguine", "Butter", "Garlic", "Lemon juice", "Parsley", "Parmesan"],
+        steps: ["Cook pasta.", "Sauté garlic in butter.", "Add shrimp and cook.", "Add lemon juice.", "Toss with pasta and parsley."]
+      },
+      {
+        name: "Caesar Salad",
+        type: "Healthy",
+        cuisine: "American",
+        time: "15 minutes",
+        difficulty: "Easy",
+        emoji: "🥗",
+        description: "Crisp romaine with Caesar dressing, croutons, and parmesan.",
+        ingredients: ["Romaine lettuce", "Caesar dressing", "Croutons", "Parmesan", "Black pepper", "Chicken optional"],
+        steps: ["Chop lettuce.", "Add dressing.", "Toss with croutons and parmesan.", "Add chicken if desired.", "Serve cold."]
+      },
+      {
+        name: "Greek Salad",
+        type: "Healthy",
+        cuisine: "Greek",
+        time: "15 minutes",
+        difficulty: "Easy",
+        emoji: "🥗",
+        description: "Fresh salad with cucumber, tomato, olives, onion, feta, and olive oil.",
+        ingredients: ["Cucumber", "Tomato", "Red onion", "Kalamata olives", "Feta", "Olive oil", "Oregano", "Lemon juice"],
+        steps: ["Chop vegetables.", "Add olives and feta.", "Drizzle olive oil and lemon.", "Season with oregano.", "Toss lightly."]
+      },
+      {
+        name: "Avocado Toast",
+        type: "Breakfast",
+        cuisine: "Modern",
+        time: "10 minutes",
+        difficulty: "Easy",
+        emoji: "🥑",
+        description: "Toasted bread topped with mashed avocado, egg, and seasoning.",
+        ingredients: ["Bread", "Avocado", "Egg", "Salt", "Pepper", "Red pepper flakes", "Lemon juice"],
+        steps: ["Toast bread.", "Mash avocado with lemon, salt, and pepper.", "Cook egg.", "Spread avocado on toast.", "Top with egg and flakes."]
+      },
+      {
+        name: "Pancakes",
+        type: "Breakfast",
+        cuisine: "American",
+        time: "20 minutes",
+        difficulty: "Easy",
+        emoji: "🥞",
+        description: "Fluffy breakfast pancakes served with butter and syrup.",
+        ingredients: ["1 cup flour", "2 tbsp sugar", "2 tsp baking powder", "1 egg", "1 cup milk", "2 tbsp melted butter", "Syrup"],
+        steps: ["Mix dry ingredients.", "Whisk egg, milk, and butter.", "Combine batter.", "Cook pancakes on griddle.", "Serve with syrup."]
+      },
+      {
+        name: "French Toast",
+        type: "Breakfast",
+        cuisine: "French-American",
+        time: "15 minutes",
+        difficulty: "Easy",
+        emoji: "🍞",
+        description: "Bread dipped in cinnamon egg mixture and cooked golden brown.",
+        ingredients: ["Bread", "Eggs", "Milk", "Cinnamon", "Vanilla", "Butter", "Syrup"],
+        steps: ["Whisk eggs, milk, cinnamon, and vanilla.", "Dip bread.", "Cook in butter.", "Flip until golden.", "Serve with syrup."]
+      },
+      {
+        name: "Omelet",
+        type: "Breakfast",
+        cuisine: "French",
+        time: "12 minutes",
+        difficulty: "Easy",
+        emoji: "🍳",
+        description: "Egg omelet filled with cheese, vegetables, and meat if desired.",
+        ingredients: ["3 eggs", "Cheese", "Bell pepper", "Onion", "Ham optional", "Butter", "Salt", "Pepper"],
+        steps: ["Whisk eggs.", "Cook vegetables.", "Pour eggs into pan.", "Add cheese and fillings.", "Fold and serve."]
+      },
+      {
+        name: "Chocolate Chip Cookies",
+        type: "Dessert",
+        cuisine: "American",
+        time: "25 minutes",
+        difficulty: "Easy",
+        emoji: "🍪",
+        description: "Classic soft cookies with chocolate chips.",
+        ingredients: ["2 1/4 cups flour", "1 cup butter", "3/4 cup sugar", "3/4 cup brown sugar", "2 eggs", "1 tsp vanilla", "1 tsp baking soda", "2 cups chocolate chips"],
+        steps: ["Cream butter and sugars.", "Add eggs and vanilla.", "Mix in dry ingredients.", "Fold in chocolate chips.", "Bake at 375°F for 9-11 minutes."]
+      },
+      {
+        name: "Brownies",
+        type: "Dessert",
+        cuisine: "American",
+        time: "35 minutes",
+        difficulty: "Easy",
+        emoji: "🍫",
+        description: "Rich, fudgy chocolate brownies.",
+        ingredients: ["1/2 cup butter", "1 cup sugar", "2 eggs", "1 tsp vanilla", "1/3 cup cocoa", "1/2 cup flour", "Salt"],
+        steps: ["Melt butter.", "Mix in sugar, eggs, and vanilla.", "Add cocoa, flour, and salt.", "Spread in pan.", "Bake at 350°F for 20-25 minutes."]
+      },
+      {
+        name: "Cheesecake",
+        type: "Dessert",
+        cuisine: "American",
+        time: "1 hour 20 minutes",
+        difficulty: "Medium",
+        emoji: "🍰",
+        description: "Creamy cheesecake with graham cracker crust.",
+        ingredients: ["Graham crackers", "Butter", "Cream cheese", "Sugar", "Eggs", "Vanilla", "Sour cream"],
+        steps: ["Make crust with crumbs and butter.", "Beat cream cheese and sugar.", "Add eggs and vanilla.", "Pour into crust.", "Bake and chill before serving."]
+      },
+      {
+        name: "Apple Pie",
+        type: "Dessert",
+        cuisine: "American",
+        time: "1 hour",
+        difficulty: "Medium",
+        emoji: "🥧",
+        description: "Classic apple pie with cinnamon sugar filling.",
+        ingredients: ["Pie crust", "Apples", "Sugar", "Brown sugar", "Cinnamon", "Nutmeg", "Lemon juice", "Butter"],
+        steps: ["Slice apples.", "Mix with sugars and spices.", "Fill pie crust.", "Top with second crust.", "Bake until golden."]
+      },
+      {
+        name: "Nachos",
+        type: "Snack",
+        cuisine: "Tex-Mex",
+        time: "15 minutes",
+        difficulty: "Easy",
+        emoji: "🧀",
+        description: "Tortilla chips loaded with cheese, jalapeños, salsa, and toppings.",
+        ingredients: ["Tortilla chips", "Shredded cheese", "Jalapeños", "Salsa", "Sour cream", "Ground beef optional", "Beans optional"],
+        steps: ["Spread chips on tray.", "Add cheese and toppings.", "Bake until cheese melts.", "Top with salsa and sour cream.", "Serve warm."]
+      },
+      {
+        name: "Mozzarella Sticks",
+        type: "Snack",
+        cuisine: "American",
+        time: "25 minutes",
+        difficulty: "Medium",
+        emoji: "🧀",
+        description: "Breaded mozzarella fried until crispy and melty.",
+        ingredients: ["Mozzarella sticks", "Flour", "Eggs", "Breadcrumbs", "Italian seasoning", "Marinara sauce", "Oil"],
+        steps: ["Coat cheese in flour, egg, and breadcrumbs.", "Freeze 15 minutes.", "Fry until golden.", "Drain on paper towels.", "Serve with marinara."]
+      },
+      {
+        name: "Buffalo Wings",
+        type: "Snack",
+        cuisine: "American",
+        time: "45 minutes",
+        difficulty: "Easy",
+        emoji: "🍗",
+        description: "Crispy chicken wings tossed in spicy buffalo sauce.",
+        ingredients: ["Chicken wings", "Salt", "Pepper", "Garlic powder", "Buffalo sauce", "Butter", "Ranch or blue cheese"],
+        steps: ["Season wings.", "Bake or air fry until crispy.", "Mix buffalo sauce with butter.", "Toss wings in sauce.", "Serve with dip."]
+      },
+      {
+        name: "Guacamole and Chips",
+        type: "Snack",
+        cuisine: "Mexican",
+        time: "10 minutes",
+        difficulty: "Easy",
+        emoji: "🥑",
+        description: "Fresh avocado dip with lime, cilantro, onion, and tortilla chips.",
+        ingredients: ["Avocados", "Lime juice", "Red onion", "Cilantro", "Tomato", "Salt", "Tortilla chips"],
+        steps: ["Mash avocados.", "Add lime juice and salt.", "Mix in onion, tomato, and cilantro.", "Taste and adjust seasoning.", "Serve with chips."]
+      },
+      {
+        name: "Soft Pretzels",
+        type: "Snack",
+        cuisine: "German-American",
+        time: "1 hour",
+        difficulty: "Medium",
+        emoji: "🥨",
+        description: "Warm chewy pretzels with salt and cheese dip.",
+        ingredients: ["Pretzel dough", "Baking soda", "Water", "Coarse salt", "Butter", "Cheese dip"],
+        steps: ["Shape dough into pretzels.", "Boil briefly in baking soda water.", "Place on baking sheet.", "Sprinkle salt.", "Bake until brown."]
+      },
+      {
+        name: "Popcorn",
+        type: "Snack",
+        cuisine: "American",
+        time: "8 minutes",
+        difficulty: "Easy",
+        emoji: "🍿",
+        description: "Classic buttery popcorn for movies or quick snacking.",
+        ingredients: ["Popcorn kernels", "Oil", "Butter", "Salt"],
+        steps: ["Heat oil in pot.", "Add kernels and cover.", "Shake while popping.", "Remove from heat when popping slows.", "Add butter and salt."]
+      },
+      {
+        name: "Trail Mix",
+        type: "Snack",
+        cuisine: "American",
+        time: "5 minutes",
+        difficulty: "Easy",
+        emoji: "🥜",
+        description: "Easy snack mix with nuts, dried fruit, chocolate, and seeds.",
+        ingredients: ["Almonds", "Cashews", "Peanuts", "Raisins", "Dried cranberries", "Chocolate chips", "Pumpkin seeds"],
+        steps: ["Add all ingredients to bowl.", "Mix evenly.", "Store in airtight container.", "Portion into bags.", "Enjoy as needed."]
+      },
+      {
+        name: "Hummus Plate",
+        type: "Snack",
+        cuisine: "Middle Eastern",
+        time: "10 minutes",
+        difficulty: "Easy",
+        emoji: "🧆",
+        description: "Creamy hummus served with pita, carrots, cucumbers, and olives.",
+        ingredients: ["Hummus", "Pita bread", "Carrots", "Cucumber", "Olives", "Olive oil", "Paprika"],
+        steps: ["Spread hummus on plate.", "Drizzle with olive oil.", "Sprinkle paprika.", "Slice vegetables and pita.", "Serve together."]
+      },
+      {
+        name: "Fruit Smoothie",
+        type: "Healthy",
+        cuisine: "Modern",
+        time: "5 minutes",
+        difficulty: "Easy",
+        emoji: "🍓",
+        description: "Refreshing smoothie with fruit, yogurt, and juice or milk.",
+        ingredients: ["Frozen berries", "Banana", "Greek yogurt", "Milk or juice", "Honey optional"],
+        steps: ["Add fruit to blender.", "Add yogurt and liquid.", "Blend until smooth.", "Add honey if desired.", "Serve cold."]
+      },
+      {
+        name: "Protein Bowl",
+        type: "Healthy",
+        cuisine: "Modern",
+        time: "25 minutes",
+        difficulty: "Easy",
+        emoji: "🥙",
+        description: "Balanced bowl with rice, protein, vegetables, and sauce.",
+        ingredients: ["Rice or quinoa", "Chicken or tofu", "Broccoli", "Carrots", "Avocado", "Sauce of choice"],
+        steps: ["Cook grain.", "Cook protein.", "Steam or roast vegetables.", "Add everything to bowl.", "Top with sauce."]
+      },
+      {
+        name: "Margarita",
+        type: "Cocktail",
+        cuisine: "Mexican",
+        time: "5 minutes",
+        difficulty: "Easy",
+        emoji: "🍸",
+        description: "Classic tequila cocktail with lime and orange liqueur.",
+        ingredients: ["2 oz tequila", "1 oz lime juice", "1 oz triple sec", "Salt", "Ice", "Lime wedge"],
+        steps: ["Salt the rim of a glass.", "Shake tequila, lime, triple sec, and ice.", "Strain into glass.", "Garnish with lime.", "Serve cold."]
+      },
+      {
+        name: "Mojito",
+        type: "Cocktail",
+        cuisine: "Cuban",
+        time: "7 minutes",
+        difficulty: "Easy",
+        emoji: "🍹",
+        description: "Refreshing rum drink with mint, lime, sugar, and soda water.",
+        ingredients: ["2 oz white rum", "Mint leaves", "1 oz lime juice", "2 tsp sugar", "Soda water", "Ice"],
+        steps: ["Muddle mint, sugar, and lime.", "Add rum and ice.", "Top with soda water.", "Stir gently.", "Garnish with mint."]
+      },
+      {
+        name: "Old Fashioned",
+        type: "Cocktail",
+        cuisine: "American",
+        time: "5 minutes",
+        difficulty: "Easy",
+        emoji: "🥃",
+        description: "Whiskey cocktail with bitters, sugar, orange, and cherry.",
+        ingredients: ["2 oz bourbon or rye", "Sugar cube", "2 dashes bitters", "Orange peel", "Cherry", "Ice"],
+        steps: ["Muddle sugar and bitters.", "Add whiskey and ice.", "Stir until chilled.", "Garnish with orange peel and cherry.", "Serve in rocks glass."]
+      },
+      {
+        name: "Martini",
+        type: "Cocktail",
+        cuisine: "Classic",
+        time: "5 minutes",
+        difficulty: "Easy",
+        emoji: "🍸",
+        description: "Classic gin or vodka martini with dry vermouth.",
+        ingredients: ["2.5 oz gin or vodka", "0.5 oz dry vermouth", "Ice", "Olive or lemon twist"],
+        steps: ["Add liquor and vermouth to mixing glass.", "Stir or shake with ice.", "Strain into martini glass.", "Garnish with olive or lemon.", "Serve cold."]
+      },
+      {
+        name: "Cosmopolitan",
+        type: "Cocktail",
+        cuisine: "American",
+        time: "5 minutes",
+        difficulty: "Easy",
+        emoji: "🍸",
+        description: "Vodka cocktail with cranberry, lime, and orange liqueur.",
+        ingredients: ["1.5 oz vodka", "1 oz cranberry juice", "0.5 oz triple sec", "0.5 oz lime juice", "Ice", "Lime twist"],
+        steps: ["Add ingredients to shaker with ice.", "Shake well.", "Strain into glass.", "Garnish with lime twist.", "Serve chilled."]
+      },
+      {
+        name: "Daiquiri",
+        type: "Cocktail",
+        cuisine: "Cuban",
+        time: "5 minutes",
+        difficulty: "Easy",
+        emoji: "🍹",
+        description: "Simple rum cocktail with lime and sugar.",
+        ingredients: ["2 oz white rum", "1 oz lime juice", "0.75 oz simple syrup", "Ice"],
+        steps: ["Add rum, lime, syrup, and ice to shaker.", "Shake until chilled.", "Strain into coupe glass.", "Garnish if desired.", "Serve cold."]
+      },
+      {
+        name: "Piña Colada",
+        type: "Cocktail",
+        cuisine: "Puerto Rican",
+        time: "7 minutes",
+        difficulty: "Easy",
+        emoji: "🍍",
+        description: "Creamy tropical cocktail with rum, pineapple, and coconut.",
+        ingredients: ["2 oz white rum", "3 oz pineapple juice", "1 oz coconut cream", "Ice", "Pineapple wedge"],
+        steps: ["Add ingredients to blender.", "Blend until smooth.", "Pour into glass.", "Garnish with pineapple.", "Serve frozen or over ice."]
+      },
+      {
+        name: "Moscow Mule",
+        type: "Cocktail",
+        cuisine: "American",
+        time: "5 minutes",
+        difficulty: "Easy",
+        emoji: "🍹",
+        description: "Vodka, lime, and ginger beer served in a copper mug.",
+        ingredients: ["2 oz vodka", "0.5 oz lime juice", "Ginger beer", "Ice", "Lime wedge", "Mint optional"],
+        steps: ["Fill mug with ice.", "Add vodka and lime.", "Top with ginger beer.", "Stir gently.", "Garnish with lime."]
+      },
+      {
+        name: "Negroni",
+        type: "Cocktail",
+        cuisine: "Italian",
+        time: "5 minutes",
+        difficulty: "Easy",
+        emoji: "🥃",
+        description: "Bitter, balanced cocktail with gin, Campari, and sweet vermouth.",
+        ingredients: ["1 oz gin", "1 oz Campari", "1 oz sweet vermouth", "Ice", "Orange peel"],
+        steps: ["Add ingredients to mixing glass.", "Stir with ice.", "Strain over fresh ice.", "Garnish with orange peel.", "Serve."]
+      },
+      {
+        name: "Manhattan",
+        type: "Cocktail",
+        cuisine: "American",
+        time: "5 minutes",
+        difficulty: "Easy",
+        emoji: "🥃",
+        description: "Whiskey cocktail with sweet vermouth and bitters.",
+        ingredients: ["2 oz rye or bourbon", "1 oz sweet vermouth", "2 dashes bitters", "Cherry", "Ice"],
+        steps: ["Add whiskey, vermouth, bitters, and ice to mixing glass.", "Stir until chilled.", "Strain into glass.", "Garnish with cherry.", "Serve."]
+      },
+      {
+        name: "Whiskey Sour",
+        type: "Cocktail",
+        cuisine: "American",
+        time: "6 minutes",
+        difficulty: "Easy",
+        emoji: "🥃",
+        description: "Whiskey shaken with lemon and simple syrup.",
+        ingredients: ["2 oz whiskey", "0.75 oz lemon juice", "0.75 oz simple syrup", "Ice", "Cherry", "Egg white optional"],
+        steps: ["Add ingredients to shaker.", "Shake with ice.", "Strain into glass.", "Garnish with cherry.", "Serve cold."]
+      },
+      {
+        name: "Bloody Mary",
+        type: "Cocktail",
+        cuisine: "American",
+        time: "8 minutes",
+        difficulty: "Easy",
+        emoji: "🍅",
+        description: "Savory vodka cocktail with tomato juice, spices, and garnish.",
+        ingredients: ["2 oz vodka", "4 oz tomato juice", "Lemon juice", "Worcestershire", "Hot sauce", "Celery salt", "Pepper", "Celery stick"],
+        steps: ["Rim glass with celery salt.", "Mix ingredients with ice.", "Pour into glass.", "Add celery and garnishes.", "Serve cold."]
+      },
+      {
+        name: "Aperol Spritz",
+        type: "Cocktail",
+        cuisine: "Italian",
+        time: "4 minutes",
+        difficulty: "Easy",
+        emoji: "🍊",
+        description: "Light sparkling cocktail with Aperol, prosecco, and soda water.",
+        ingredients: ["3 oz prosecco", "2 oz Aperol", "1 oz soda water", "Ice", "Orange slice"],
+        steps: ["Fill glass with ice.", "Add prosecco.", "Add Aperol.", "Top with soda water.", "Garnish with orange."]
+      },
+      {
+        name: "Espresso Martini",
+        type: "Cocktail",
+        cuisine: "Modern Classic",
+        time: "7 minutes",
+        difficulty: "Easy",
+        emoji: "☕",
+        description: "Vodka cocktail with espresso and coffee liqueur.",
+        ingredients: ["2 oz vodka", "1 oz espresso", "0.75 oz coffee liqueur", "0.25 oz simple syrup", "Ice", "Coffee beans"],
+        steps: ["Brew espresso and cool slightly.", "Add ingredients to shaker with ice.", "Shake hard.", "Strain into martini glass.", "Garnish with coffee beans."]
+      },
+      {
+        name: "Long Island Iced Tea",
+        type: "Cocktail",
+        cuisine: "American",
+        time: "7 minutes",
+        difficulty: "Medium",
+        emoji: "🍹",
+        description: "Strong mixed drink with several spirits, sour mix, and cola.",
+        ingredients: ["0.5 oz vodka", "0.5 oz gin", "0.5 oz rum", "0.5 oz tequila", "0.5 oz triple sec", "Sour mix", "Cola", "Lemon"],
+        steps: ["Add spirits and sour mix to glass with ice.", "Stir.", "Top with cola.", "Garnish with lemon.", "Serve cold."]
+      },
+      {
+        name: "Tom Collins",
+        type: "Cocktail",
+        cuisine: "Classic",
+        time: "5 minutes",
+        difficulty: "Easy",
+        emoji: "🍋",
+        description: "Gin, lemon, sugar, and soda water served tall over ice.",
+        ingredients: ["2 oz gin", "1 oz lemon juice", "0.75 oz simple syrup", "Soda water", "Ice", "Lemon slice"],
+        steps: ["Add gin, lemon, syrup, and ice to glass.", "Stir.", "Top with soda water.", "Garnish with lemon.", "Serve."]
+      },
+      {
+        name: "Mai Tai",
+        type: "Cocktail",
+        cuisine: "Tiki",
+        time: "7 minutes",
+        difficulty: "Medium",
+        emoji: "🍹",
+        description: "Tropical rum cocktail with lime, orange curaçao, and orgeat.",
+        ingredients: ["2 oz rum", "0.75 oz lime juice", "0.5 oz orange curaçao", "0.5 oz orgeat", "Mint", "Ice"],
+        steps: ["Shake rum, lime, curaçao, orgeat, and ice.", "Strain into glass.", "Add crushed ice.", "Garnish with mint.", "Serve."]
+      },
+      {
+        name: "Paloma",
+        type: "Cocktail",
+        cuisine: "Mexican",
+        time: "5 minutes",
+        difficulty: "Easy",
+        emoji: "🍊",
+        description: "Tequila cocktail with grapefruit soda and lime.",
+        ingredients: ["2 oz tequila", "Grapefruit soda", "0.5 oz lime juice", "Salt", "Ice", "Grapefruit wedge"],
+        steps: ["Salt rim if desired.", "Fill glass with ice.", "Add tequila and lime.", "Top with grapefruit soda.", "Garnish and serve."]
+      },
+      {
+        name: "Sangria",
+        type: "Cocktail",
+        cuisine: "Spanish",
+        time: "15 minutes plus chill",
+        difficulty: "Easy",
+        emoji: "🍷",
+        description: "Wine punch with fruit, brandy, juice, and soda.",
+        ingredients: ["Red wine", "Brandy", "Orange juice", "Orange slices", "Apple slices", "Berries", "Soda water"],
+        steps: ["Add fruit to pitcher.", "Pour in wine, brandy, and juice.", "Chill for at least 1 hour.", "Top with soda.", "Serve over ice."]
+      },
+      {
+        name: "Gin and Tonic",
+        type: "Cocktail",
+        cuisine: "Classic",
+        time: "3 minutes",
+        difficulty: "Easy",
+        emoji: "🍸",
+        description: "Simple refreshing drink with gin, tonic water, and lime.",
+        ingredients: ["2 oz gin", "Tonic water", "Ice", "Lime wedge"],
+        steps: ["Fill glass with ice.", "Add gin.", "Top with tonic.", "Stir gently.", "Garnish with lime."]
+      }
+    ];
+
+    let currentFilter = "All";
+
+    const extraNames = [
+      "Lasagna", "Ramen", "Pho", "Bibimbap", "Paella", "Jambalaya", "Gumbo", "Clam Chowder", "Lobster Roll", "Crab Cakes",
+      "Chicken Parmesan", "Eggplant Parmesan", "Cacio e Pepe", "Carbonara", "Risotto", "Gnocchi", "Ravioli", "Tortellini", "Pesto Pasta", "Minestrone",
+      "Birria Tacos", "Quesadilla", "Enchiladas", "Tamales", "Chilaquiles", "Pozole", "Carne Asada", "Elote", "Tostadas", "Sopes",
+      "Shawarma", "Kebab", "Lamb Kofta", "Tabbouleh", "Baba Ganoush", "Dolmas", "Moussaka", "Spanakopita", "Chicken Souvlaki", "Baklava",
+      "General Tso Chicken", "Kung Pao Chicken", "Beef and Broccoli", "Lo Mein", "Chow Mein", "Dumplings", "Spring Rolls", "Hot Pot", "Mapo Tofu", "Peking Duck",
+      "Chicken Katsu", "Tonkatsu", "Miso Soup", "Udon", "Yakitori", "Onigiri", "Takoyaki", "Okonomiyaki", "Tempura", "Sashimi",
+      "Chicken Satay", "Green Curry", "Red Curry", "Tom Yum Soup", "Massaman Curry", "Mango Sticky Rice", "Larb", "Som Tum", "Khao Soi", "Drunken Noodles",
+      "Tikka Masala", "Saag Paneer", "Palak Paneer", "Biryani", "Samosas", "Chana Masala", "Vindaloo", "Rogan Josh", "Dal Makhani", "Naan",
+      "Beef Stew", "Pot Roast", "Meatloaf", "Mac and Cheese", "Grilled Cheese", "Tomato Soup", "Chicken Noodle Soup", "Chili", "Cornbread", "Pulled Pork",
+      "Club Sandwich", "BLT", "Philly Cheesesteak", "Reuben", "Hot Dog", "Corn Dog", "Chicken Sandwich", "Turkey Wrap", "Sloppy Joe", "French Dip",
+      "Acai Bowl", "Greek Yogurt Parfait", "Breakfast Burrito", "Bagel and Lox", "Eggs Benedict", "Hash Browns", "Waffles", "Crepes", "Granola Bowl", "Breakfast Sandwich",
+      "Tiramisu", "Creme Brulee", "Cannoli", "Gelato", "Donuts", "Cupcakes", "Lemon Bars", "Banana Bread", "Pumpkin Pie", "Key Lime Pie",
+      "Ice Cream Sundae", "Rice Pudding", "Bread Pudding", "Churros", "Flan", "Tres Leches Cake", "Macarons", "Eclairs", "Pavlova", "Panna Cotta",
+      "Chicken Nuggets", "French Fries", "Loaded Fries", "Potato Skins", "Onion Rings", "Jalapeno Poppers", "Spinach Artichoke Dip", "Deviled Eggs", "Cheese Board", "Charcuterie Board",
+      "Caprese Skewers", "Mini Sliders", "Pizza Rolls", "Bagel Bites", "Chicken Queso Dip", "Pretzel Bites", "Garlic Bread", "Bruschetta", "Stuffed Mushrooms", "Pigs in a Blanket",
+      "French 75", "Sidecar", "Mint Julep", "Dark and Stormy", "Rum Punch", "Hurricane", "Blue Lagoon", "Tequila Sunrise", "Sex on the Beach", "Bay Breeze",
+      "Sea Breeze", "White Russian", "Black Russian", "Irish Coffee", "Amaretto Sour", "French Martini", "Boulevardier", "Sazerac", "Vesper", "Clover Club",
+      "Pisco Sour", "Caipirinha", "Caipiroska", "Bellini", "Mimosa", "Kir Royale", "Paper Plane", "Penicillin", "Aviation", "Last Word",
+      "Zombie", "Painkiller", "Planter's Punch", "Singapore Sling", "Brandy Alexander", "Grasshopper", "Mudslide", "Lemon Drop Martini", "Appletini", "Chocolate Martini"
+    ];
+
+    extraNames.forEach((name, index) => {
+      const cocktailWords = ["Martini", "Sour", "Punch", "Mimosa", "Bellini", "Sling", "Spritz", "Russian", "Coffee", "Julep", "Stormy", "Sunrise", "Beach", "Lagoon", "Royale", "Plane", "Aviation", "Zombie", "Painkiller", "Caipirinha", "Vesper", "Sazerac", "Alexander", "Grasshopper", "Mudslide"];
+      const snackWords = ["Fries", "Rings", "Poppers", "Dip", "Eggs", "Board", "Skewers", "Sliders", "Rolls", "Bites", "Bread", "Bruschetta", "Mushrooms", "Blanket", "Nuggets"];
+      const dessertWords = ["Cake", "Pie", "Pudding", "Bars", "Bread", "Donuts", "Cupcakes", "Churros", "Flan", "Macarons", "Eclairs", "Gelato", "Tiramisu", "Cannoli", "Sundae", "Panna Cotta", "Pavlova", "Creme Brulee"];
+      const breakfastWords = ["Breakfast", "Waffles", "Crepes", "Benedict", "Hash Browns", "Parfait", "Bagel"];
+
+      let type = "Dish";
+      if (cocktailWords.some(word => name.includes(word))) type = "Cocktail";
+      if (snackWords.some(word => name.includes(word))) type = "Snack";
+      if (dessertWords.some(word => name.includes(word))) type = "Dessert";
+      if (breakfastWords.some(word => name.includes(word))) type = "Breakfast";
+
+      recipes.push({
+        name,
+        type,
+        cuisine: "International",
+        time: type === "Cocktail" ? "5-10 minutes" : "20-60 minutes",
+        difficulty: index % 3 === 0 ? "Easy" : index % 3 === 1 ? "Medium" : "Easy",
+        emoji: type === "Cocktail" ? "🍹" : type === "Snack" ? "🍿" : type === "Dessert" ? "🍰" : type === "Breakfast" ? "🍳" : "🍽️",
+        description: `${name} is a popular ${type.toLowerCase()} you can add to your RecipeMe collection.`,
+        ingredients: type === "Cocktail"
+          ? ["Main spirit", "Citrus or mixer", "Sweetener if needed", "Ice", "Garnish"]
+          : ["Main ingredient", "Seasonings", "Oil or butter", "Sauce or topping", "Fresh garnish"],
+        steps: type === "Cocktail"
+          ? ["Add ingredients to shaker or glass.", "Add ice.", "Shake or stir depending on the drink.", "Strain or pour into serving glass.", "Garnish and serve responsibly."]
+          : ["Prepare all ingredients.", "Cook or assemble the main components.", "Season to taste.", "Add sauce or toppings.", "Serve fresh and enjoy."]
+      });
+    });
+
+    function renderRecipes(list) {
+      const grid = document.getElementById("recipeGrid");
+      const stats = document.getElementById("stats");
+      grid.innerHTML = "";
+      stats.textContent = `Showing ${list.length} recipes out of ${recipes.length}+ total RecipeMe items`;
+
+      if (list.length === 0) {
+        grid.innerHTML = `<p style="grid-column:1/-1;text-align:center;font-size:1.2rem;color:#777;">No recipes found. Try another search.</p>`;
+        return;
+      }
+
+      list.forEach((recipe, index) => {
+        const card = document.createElement("div");
+        card.className = "card";
+        card.innerHTML = `
+          <div class="card-img">${recipe.emoji}</div>
+          <div class="card-content">
+            <span class="tag">${recipe.type}</span>
+            <h3>${recipe.name}</h3>
+            <div class="meta">${recipe.cuisine} • ${recipe.time} • ${recipe.difficulty}</div>
+            <p>${recipe.description}</p>
+            <button onclick="openRecipe(${recipes.indexOf(recipe)})">View Recipe</button>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function filterRecipes(type, button) {
+      currentFilter = type;
+      document.querySelectorAll(".filter-btn").forEach(btn => btn.classList.remove("active"));
+      button.classList.add("active");
+      searchRecipes();
+    }
+
+    function searchRecipes() {
+      const query = document.getElementById("searchInput").value.toLowerCase().trim();
+      let filtered = recipes.filter(recipe => {
+        const matchesFilter = currentFilter === "All" || recipe.type === currentFilter;
+        const matchesSearch =
+          recipe.name.toLowerCase().includes(query) ||
+          recipe.type.toLowerCase().includes(query) ||
+          recipe.cuisine.toLowerCase().includes(query) ||
+          recipe.description.toLowerCase().includes(query) ||
+          recipe.ingredients.join(" ").toLowerCase().includes(query);
+        return matchesFilter && matchesSearch;
+      });
+      renderRecipes(filtered);
+    }
+
+    function openRecipe(index) {
+      const recipe = recipes[index];
+      const modal = document.getElementById("recipeModal");
+      const modalBody = document.getElementById("modalBody");
+
+      modalBody.innerHTML = `
+        <h2>${recipe.emoji} ${recipe.name}</h2>
+        <p><strong>Type:</strong> ${recipe.type} | <strong>Cuisine:</strong> ${recipe.cuisine} | <strong>Time:</strong> ${recipe.time} | <strong>Difficulty:</strong> ${recipe.difficulty}</p>
+        <p style="margin-top:12px;">${recipe.description}</p>
+
+        <div class="modal-section">
+          <h3>Ingredients</h3>
+          <ul>${recipe.ingredients.map(item => `<li>${item}</li>`).join("")}</ul>
+        </div>
+
+        <div class="modal-section">
+          <h3>Instructions</h3>
+          <ol>${recipe.steps.map(step => `<li>${step}</li>`).join("")}</ol>
+        </div>
+      `;
+
+      modal.style.display = "block";
+    }
+
+    function closeModal() {
+      document.getElementById("recipeModal").style.display = "none";
+    }
+
+    window.onclick = function(event) {
+      const modal = document.getElementById("recipeModal");
+      if (event.target === modal) {
+        closeModal();
+      }
+    };
+
+    document.getElementById("searchInput").addEventListener("input", searchRecipes);
+
+    renderRecipes(recipes);
+  </script>
+</body>
+</html>
